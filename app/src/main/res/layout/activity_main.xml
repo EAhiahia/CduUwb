@@ -6,10 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.cdu.uwb.ui.MapRouteView
-        android:id="@+id/MapRouteView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+
+    <Button
+        android:id="@+id/start_maprouteview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="start_maprouteview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/start_gyroscope"
@@ -17,9 +23,7 @@
         android:layout_height="wrap_content"
         android:text="start_gyroscope"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="33dp"
-        tools:ignore="MissingConstraints" />
-
-
+        app:layout_constraintTop_toBottomOf="@+id/start_maprouteview" />
 </androidx.constraintlayout.widget.ConstraintLayout>

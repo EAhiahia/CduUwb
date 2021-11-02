@@ -29,6 +29,11 @@
             android:exported="true"
             android:screenOrientation="portrait">
         </activity>
+
+        <activity
+            android:name="com.cdu.uwb.activity.MapRouteVewActivity"
+            android:exported="true">
+        </activity>
     </application>
 
 </manifest>

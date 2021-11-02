@@ -54,7 +54,7 @@ class MapRouteView @JvmOverloads constructor(context: Context, attrs: AttributeS
     private lateinit var mMapFloatArray: FloatArray
 
     //使用者的位置
-    private var mPositionPoint = floatArrayOf(300f, 300f)
+    var mPositionPoint = floatArrayOf(300f, 300f)
 
     private var mOnRedrawFinishedListener: OnRedrawFinishedListener? = null
 
@@ -79,6 +79,7 @@ class MapRouteView @JvmOverloads constructor(context: Context, attrs: AttributeS
         }
         //绘制使用人的位置点
         canvas.drawCircle(mPositionPoint[0], mPositionPoint[1], 10f, mPositionPaint)
+        //绘制虚线连接起点
         canvas.drawLine(
             mIdFloatArray[0],
             mIdFloatArray[1],

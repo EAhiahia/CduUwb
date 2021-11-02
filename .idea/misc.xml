@@ -3,9 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/activity_main.xml" value="0.40729166666666666" />
+        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/gyroscope_layout.xml" value="0.40729166666666666" />
         <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/map_route_activity.xml" value="0.12284701114488349" />
+        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/map_route_layout.xml" value="0.2557291666666667" />
       </map>
     </option>
   </component>
