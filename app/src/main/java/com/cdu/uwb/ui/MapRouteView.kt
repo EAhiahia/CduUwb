@@ -14,18 +14,20 @@ import com.google.gson.reflect.TypeToken
 import java.util.zip.Inflater
 import kotlin.concurrent.thread
 
-//TODO:为什么只能放入两个参数？答：要用@JvmOverloads constructor
+//地图界面控件
 class MapRouteView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : View(context, attrs, defStyleAttr) {
 
     //companion object只用来存放TAG这样的已经确定的数值
     companion object {
+        @JvmStatic
         val TAG = "MapRouteView"
     }
 
     //全局变量放在此处，val不需要private
     //其中一个手环的路线颜色
     private lateinit var mRoutePaint: Paint
+
     //地图的线条颜色
     private lateinit var mMapPaint: Paint
     private lateinit var mPositionPaint: Paint
@@ -47,8 +49,10 @@ class MapRouteView @JvmOverloads constructor(context: Context, attrs: AttributeS
      */
     //这是其中一个手环的所有坐标数组，放入allIdCoordinate中，目前不需要实现，因为我们的实际应用只需要一个人的路线
     private lateinit var mIdFloatArray: FloatArray
+
     //这是地图的所有坐标数组，希望外界传入
     private lateinit var mMapFloatArray: FloatArray
+
     //使用者的位置
     private var mPositionPoint = floatArrayOf(300f, 300f)
 
@@ -75,33 +79,41 @@ class MapRouteView @JvmOverloads constructor(context: Context, attrs: AttributeS
         }
         //绘制使用人的位置点
         canvas.drawCircle(mPositionPoint[0], mPositionPoint[1], 10f, mPositionPaint)
-        canvas.drawLine(mIdFloatArray[0], mIdFloatArray[1],mPositionPoint[0], mPositionPoint[1], mDistancePaint)
+        canvas.drawLine(
+            mIdFloatArray[0],
+            mIdFloatArray[1],
+            mPositionPoint[0],
+            mPositionPoint[1],
+            mDistancePaint
+        )
 
     }
 
     /**
      * 给外界设置数据的接口
      */
-    fun setMapData(mapArray: FloatArray){
+    fun setMapData(mapArray: FloatArray) {
         this.mMapFloatArray = mapArray
         invalidate()
     }
+
     fun setIdData(idArray: FloatArray) {
         this.mIdFloatArray = idArray
         invalidate()
     }
-    fun setData(mapArray: FloatArray, idArray: FloatArray){
+
+    fun setData(mapArray: FloatArray, idArray: FloatArray) {
         this.mMapFloatArray = mapArray
         this.mIdFloatArray = idArray
         invalidate()
     }
 
     //毫无意义的监听器
-    fun setOnRedrawFinishedListener(listener: OnRedrawFinishedListener){
+    fun setOnRedrawFinishedListener(listener: OnRedrawFinishedListener) {
         this.mOnRedrawFinishedListener = listener
     }
 
-    interface OnRedrawFinishedListener{
+    interface OnRedrawFinishedListener {
         fun onRedrawFinished()
     }
 
@@ -139,7 +151,7 @@ class MapRouteView @JvmOverloads constructor(context: Context, attrs: AttributeS
             style = Paint.Style.FILL_AND_STROKE
             strokeWidth = 10f
             isAntiAlias = true
-            pathEffect = DashPathEffect(floatArrayOf(4f,4f), 0f)
+            pathEffect = DashPathEffect(floatArrayOf(4f, 4f), 0f)
         }
     }
 
@@ -173,7 +185,6 @@ class MapRouteView @JvmOverloads constructor(context: Context, attrs: AttributeS
              *  读取前二十个
              *  因为目前处理的数据都是本地的，而且文件名是由1到n，所以我们采用了循环来读取json数据
              *  TODO: 最佳方案应该是从服务器直接获取，然后直接绘制
-             *
              */
             for (p in 1..20) {
                 context.assets.open("$p.json").use { inputStream ->
