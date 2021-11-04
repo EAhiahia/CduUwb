@@ -4,15 +4,11 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import com.cdu.uwb.R
 import com.cdu.uwb.data.Coordinate
 import com.google.gson.Gson
 import com.google.gson.stream.JsonReader
 import com.google.gson.reflect.TypeToken
-import java.util.zip.Inflater
-import kotlin.concurrent.thread
 
 //地图界面控件
 class MapRouteView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
@@ -24,39 +20,22 @@ class MapRouteView @JvmOverloads constructor(context: Context, attrs: AttributeS
         val TAG = "MapRouteView"
     }
 
-    //全局变量放在此处，val不需要private
-    //其中一个手环的路线颜色
-    private lateinit var mRoutePaint: Paint
-
-    //地图的线条颜色
-    private lateinit var mMapPaint: Paint
-    private lateinit var mPositionPaint: Paint
-    private lateinit var mDistancePaint: Paint
-
-    //存放从json中获取的数据的对象形式数据
-    private var mCoordinate = ArrayList<Coordinate>()
-
-    /**
-     * 通过键值对的方式存放所有点的所有坐标（HashMap）
-     * HashMap<FloatArray, Int>()
-     *
-     */
-//    private var allIdCoordinate = HashMap<FloatArray, Int>()
-
     /**
      * 使用lateinit是说初始化的时机由我们自行决定，并不会自动赋值为null
      * 判定是否初始化的语句： this::xx.isInitialized
      */
-    //这是其中一个手环的所有坐标数组，放入allIdCoordinate中，目前不需要实现，因为我们的实际应用只需要一个人的路线
-    private lateinit var mIdFloatArray: FloatArray
-
+    //其中一个手环的路线颜色
+    private lateinit var mRoutePaint: Paint
+    //地图的线条颜色画笔
+    private lateinit var mMapPaint: Paint
+    //用户位置的圆点画笔
+    private lateinit var mPositionPaint: Paint
+    //存放从json中获取的数据的对象形式数据
+    private var mCoordinate = ArrayList<Coordinate>()
     //这是地图的所有坐标数组，希望外界传入
     private lateinit var mMapFloatArray: FloatArray
-
     //使用者的位置
     var mPositionPoint = floatArrayOf(300f, 300f)
-
-    private var mOnRedrawFinishedListener: OnRedrawFinishedListener? = null
 
     //这里获取所需要的数据
     init {
@@ -67,27 +46,39 @@ class MapRouteView @JvmOverloads constructor(context: Context, attrs: AttributeS
     //进行绘制
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-//        canvas!!.translate(100f, 100f)
-//        canvas.scale(2f, 2f)
+        drawMapLine(canvas)
+        drawRouteLine(canvas)
+        //绘制使用人的位置点
+        canvas.drawCircle(mPositionPoint[0], mPositionPoint[1], 10f, mPositionPaint)
+        //绘制虚线连接起点与用户位置点
+        canvas.drawLine(mPositionPoint[0], mPositionPoint[1], mCoordinate[0].x * 100f, mCoordinate[0].y * 100f, mPositionPaint)
+    }
+
+    //这里应该使用和drawRouteLine相似的方法
+    private fun drawMapLine(canvas: Canvas) {
         //先绘制地图，先判定是否已经初始化，因为我们目前没有地图数据
         if (this::mMapFloatArray.isInitialized) {
             canvas.drawLines(mMapFloatArray, mMapPaint)
         }
-        //其中一个手环的路线
-        if (this::mIdFloatArray.isInitialized) {
-            canvas.drawLines(mIdFloatArray, mRoutePaint)
-        }
-        //绘制使用人的位置点
-        canvas.drawCircle(mPositionPoint[0], mPositionPoint[1], 10f, mPositionPaint)
-        //绘制虚线连接起点
-        canvas.drawLine(
-            mIdFloatArray[0],
-            mIdFloatArray[1],
-            mPositionPoint[0],
-            mPositionPoint[1],
-            mDistancePaint
-        )
+    }
 
+    private fun drawRouteLine(canvas: Canvas) {
+        var mIdPath = Path()
+        //跳过第一个，因为第一个要使用moveTo方法，使其成为起点
+        var stepFirst = 1
+        for (i in mCoordinate) {
+            Log.d(TAG, "onDraw: ${i.x},${i.y}")
+            if (stepFirst == 1) {
+                mIdPath.moveTo(i.x * 100f, i.y * 100f)
+                stepFirst = 0
+            } else {
+                mIdPath.lineTo(i.x * 100f, i.y * 100f)
+            }
+        }
+        canvas.drawPath(mIdPath, mRoutePaint)
+        mIdPath.reset()
+        //重置标记
+        stepFirst = 1
     }
 
     /**
@@ -98,26 +89,6 @@ class MapRouteView @JvmOverloads constructor(context: Context, attrs: AttributeS
         invalidate()
     }
 
-    fun setIdData(idArray: FloatArray) {
-        this.mIdFloatArray = idArray
-        invalidate()
-    }
-
-    fun setData(mapArray: FloatArray, idArray: FloatArray) {
-        this.mMapFloatArray = mapArray
-        this.mIdFloatArray = idArray
-        invalidate()
-    }
-
-    //毫无意义的监听器
-    fun setOnRedrawFinishedListener(listener: OnRedrawFinishedListener) {
-        this.mOnRedrawFinishedListener = listener
-    }
-
-    interface OnRedrawFinishedListener {
-        fun onRedrawFinished()
-    }
-
     //初始化画笔
     private fun initPaint() {
         //其中一个手环的路线颜色
@@ -125,7 +96,7 @@ class MapRouteView @JvmOverloads constructor(context: Context, attrs: AttributeS
         mRoutePaint.run {
             color = Color.BLUE
             strokeWidth = 5f
-            style = Paint.Style.FILL
+            style = Paint.Style.STROKE
             isAntiAlias = true
         }
 
@@ -142,17 +113,9 @@ class MapRouteView @JvmOverloads constructor(context: Context, attrs: AttributeS
         mPositionPaint = Paint()
         mPositionPaint.run {
             color = Color.RED
-            style = Paint.Style.FILL
+            setPathEffect(DashPathEffect(floatArrayOf(10f, 5f), 0f))
             isAntiAlias = true
-        }
-
-        mDistancePaint = Paint()
-        mDistancePaint.run {
-            color = Color.MAGENTA
-            style = Paint.Style.FILL_AND_STROKE
-            strokeWidth = 10f
-            isAntiAlias = true
-            pathEffect = DashPathEffect(floatArrayOf(4f, 4f), 0f)
+            strokeWidth = 5f
         }
     }
 
@@ -193,45 +156,14 @@ class MapRouteView @JvmOverloads constructor(context: Context, attrs: AttributeS
                         val dataType = object : TypeToken<List<Coordinate>>() {}.type
                         //解析
                         val dataList: List<Coordinate> = Gson().fromJson(jsonReader, dataType)
-                        //将文件的第一个点的坐标以对象的形式放入我们的list中
+                        //将文件的第一个点的坐标以对象的形式放入我们的list中，因为其中有所有点的坐标，但我们只需要一个
                         mCoordinate.add(dataList[0])
-                        //查看所读取的所有坐标
-//                        for (point in dataList) {
-//                            Log.d(TAG, "id is ${point.id}")
-//                            Log.d(TAG, "x is ${point.x}")
-//                            Log.d(TAG, "y is ${point.y}")
-//                                    mCoordinate.add(point)
-//                        }
                     }
                 }
             }
         } catch (ex: Exception) {
-            Log.e(TAG, "Error seeding database", ex)
-        }
-        //由于drawlines是每四个绘制一次，所以我们令最开始的两个为第一个点
-        mIdFloatArray = floatArrayOf((mCoordinate[0].x) * 100, (mCoordinate[0].y) * 100)
-        //查看第一个的所有坐标，并为mFloatArray赋值
-        for (i in mCoordinate) {
-            Log.d(TAG, "id is ${i.id}")
-            Log.d(TAG, "x is ${i.x}")
-            Log.d(TAG, "y is ${i.y}")
-            Log.d(TAG, "x is ${(i.x) * 100}")
-            Log.d(TAG, "y is ${(i.y) * 100}")
-            /**
-             * 来自drawLines的实现原理
-             * This is logically the same as
-             * drawing the array as follows: drawLine(pts[0], pts[1], pts[2], pts[3]) followed by
-             * drawLine(pts[4], pts[5], pts[6], pts[7]) and so on.
-             * 因为他是每四个进行一次绘制，所以我们赋值两次，令第一组的结尾变为第二组的开头
-             */
-            mIdFloatArray = mIdFloatArray.plus((i.x) * 100)
-            mIdFloatArray = mIdFloatArray.plus((i.y) * 100)
-            mIdFloatArray = mIdFloatArray.plus((i.x) * 100)
-            mIdFloatArray = mIdFloatArray.plus((i.y) * 100)
-        }
-        //查看该线段的所有点
-        for (i in mIdFloatArray) {
-            println(i)
+            Log.e(MapRouteView.TAG, "Error seeding database", ex)
         }
     }
 }
+
