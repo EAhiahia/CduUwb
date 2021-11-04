@@ -19,24 +19,14 @@ class MapRouteVewActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.map_route_layout)
-        mNavigationArrow = findViewById(R.id.navigation_arrow)
-        mMapRouteView = findViewById(R.id.maprouteview)
-        MoveNavigationArrow()
+        supportActionBar?.hide()
     }
 
+    //让用户位置的箭头图片随路线移动
     private fun MoveNavigationArrow() {
-//        var location = IntArray(2)
-//        mNavigationArrow.getLocationInWindow(location)
-//        var mNavigationArrowTranslate =
-//            TranslateAnimation(location[0] - 0f, -mMapRouteView.mPositionPoint[0],
-//                location[1] - 0f, -mMapRouteView.mPositionPoint[1])
-//        mNavigationArrow.animation = mNavigationArrowTranslate
-//        mNavigationArrowTranslate.duration = 1000
-//        mNavigationArrow.setImageDrawable(resources.getDrawable(R.drawable.navigation_arrow))
-//        mNavigationArrowTranslate.start()
-
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             var path = Path().apply {
+                moveTo(mMapRouteView.mPositionPoint[0] - 50f, mMapRouteView.mPositionPoint[1] - 50f)
                 lineTo(mMapRouteView.mPositionPoint[0] - 50f, mMapRouteView.mPositionPoint[1] - 50f)
             }
             val animator = ObjectAnimator.ofFloat(mNavigationArrow, View.X,
@@ -44,8 +34,6 @@ class MapRouteVewActivity: AppCompatActivity() {
                 duration = 1000
                 start()
             }
-        } else {
-            //Create animator without using line path
         }
     }
 }

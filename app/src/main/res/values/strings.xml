@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">UWB</string>
+    <drawable name="navigation_arrow_logo">@drawable/navigation_arrow</drawable>
+    <drawable name="back_logo">@drawable/back</drawable>
 </resources>
