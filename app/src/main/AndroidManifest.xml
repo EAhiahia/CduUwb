@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.cdu.uwb">
 
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,14 +11,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.UWB">
-        <service
-            android:name=".service.AskDataService"
-            android:enabled="true"
-            android:exported="true"></service>
 
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:label="UWB人群疏散软件">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,14 +24,7 @@
         </activity>
 
         <activity
-            android:name="com.cdu.uwb.testclass.GyroScopeClass"
-            android:exported="true"
-            android:screenOrientation="portrait">
-        </activity>
-
-        <activity
-            android:name="com.cdu.uwb.activity.MapRouteVewActivity"
-            android:exported="true">
+            android:name="com.cdu.uwb.activity.MapRouteVewActivity">
         </activity>
     </application>
 

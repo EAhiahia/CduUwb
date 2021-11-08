@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <drawable name="navigation_arrow_image">@drawable/navigation_arrow</drawable>
+    <drawable name="back_image">@drawable/back</drawable>
+    <drawable name="menu_image">@drawable/ic_menu</drawable>
+    <drawable name="walking_image">@drawable/walking</drawable>
+    <drawable name="standing_image">@drawable/standing</drawable>
+    <drawable name="running_image">@drawable/running</drawable>
+    <drawable name="sos_image">@drawable/sos</drawable>
+    <drawable name="home_image">@drawable/home</drawable>
+    <drawable name="instruction_image">@drawable/instruction</drawable>
+    <drawable name="first_aid_knowledge_image">@drawable/firstaidknowledge</drawable>
+    <drawable name="evacuate_knowledge_image">@drawable/evacuateknowledge</drawable>
+    <drawable name="map_image">@drawable/map</drawable>
+    <drawable name="call_image">@drawable/call</drawable>
+</resources>

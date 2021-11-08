@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/home_page"
+            android:icon="@drawable/home_image"
+            android:title="首页"/>
+
+        <item
+            android:id="@+id/instructions"
+            android:icon="@drawable/instruction_image"
+            android:title="软件使用说明"/>
+
+        <item
+            android:id="@+id/map_all"
+            android:icon="@drawable/map_image"
+            android:title="场地地图查看"/>
+
+        <item
+            android:id="@+id/evacuate_knowledge"
+            android:icon="@drawable/evacuate_knowledge_image"
+            android:title="应急疏散知识"/>
+
+        <item
+            android:id="@+id/first_aid_knowledge"
+            android:icon="@drawable/first_aid_knowledge_image"
+            android:title="常见急救方法"/>
+    </group>
+</menu>

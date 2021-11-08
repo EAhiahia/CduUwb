@@ -3,11 +3,17 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.271875" />
         <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/drawable/ic_launcher_background.xml" value="0.271875" />
-        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/activity_main.xml" value="0.14356884057971014" />
+        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/drawerlayout.xml" value="0.12436676798378926" />
         <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/gyroscope_layout.xml" value="0.24320652173913043" />
         <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/map_route_activity.xml" value="0.12284701114488349" />
-        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/map_route_layout.xml" value="0.24320652173913043" />
+        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/map_route_layout.xml" value="0.14356884057971014" />
+        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/nav_header.xml" value="0.14356884057971014" />
+        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/titile_bar.xml" value="0.2557291666666667" />
+        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/menu/nav_menu.xml" value="0.2557291666666667" />
+        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/menu/toolbar.xml" value="0.2557291666666667" />
       </map>
     </option>
   </component>
