@@ -1,14 +1,26 @@
 package com.cdu.uwb.ui
 
+import android.animation.AnimatorSet
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
+import com.cdu.uwb.R
 import com.cdu.uwb.data.Coordinate
 import com.google.gson.Gson
 import com.google.gson.stream.JsonReader
 import com.google.gson.reflect.TypeToken
+import android.graphics.BitmapFactory
+
+import android.graphics.Bitmap
+import androidx.core.animation.addListener
+import com.cdu.uwb.data.Distance
+import com.cdu.uwb.data.Position
+import com.cdu.uwb.data.Speed
+
 
 //地图界面控件
 class MapRouteView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
@@ -26,33 +38,75 @@ class MapRouteView @JvmOverloads constructor(context: Context, attrs: AttributeS
      */
     //其中一个手环的路线颜色
     private lateinit var mRoutePaint: Paint
+
     //地图的线条颜色画笔
     private lateinit var mMapPaint: Paint
+
     //用户位置的圆点画笔
     private lateinit var mPositionPaint: Paint
-    //存放从json中获取的数据的对象形式数据
-    private var mCoordinate = ArrayList<Coordinate>()
+
+//    private lateinit var mBitPaint: Paint
+
+    //存放从json中获取的数据的对象形式数据，目前存放的是测试用例
+    private var mCoordinate = ArrayList<Coordinate>()  //存放的导航路线的点
+    private var mPosition = ArrayList<Position>()   //存放的用户位置的点
+    private var mDistance = ArrayList<Distance>()
+    private var mSpeed = ArrayList<Speed>()
+
     //这是地图的所有坐标数组，希望外界传入
     private lateinit var mMapFloatArray: FloatArray
+
     //使用者的位置
-    var mPositionPoint = floatArrayOf(300f, 300f)
+//    var mPositionPoint = floatArrayOf(300f, 300f)
+
+
+//    private lateinit var arrowBitmap: Bitmap
+
+//    private var toX: Int = 0
+//    private var toY: Int = 0
+//    private var toX2: Int = 0
+//    private var toY2: Int = 0
+//
+//    //保存着目的区域的Rect
+//    private lateinit var toRect: Rect
 
     //这里获取所需要的数据
     init {
         initPaint()
         parseJSONWithGSON()
+        readLocalDistanceFile()
+        readLocalPositionFile()
+        readLocalSpeedFile()
+
+//        initData()
     }
+
+//    private fun initData() {
+//        toX = mPositionPoint[0].toInt() - arrowBitmap.width / 8
+//        toY = mPositionPoint[1].toInt() - arrowBitmap.height / 8
+//        toX2 = toX + arrowBitmap.width / 4
+//        toY2 = toY + arrowBitmap.height / 4
+//        toRect = Rect(toX, toY, toX2, toY2)
+//    }
 
     //进行绘制
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+
         drawMapLine(canvas)
         drawRouteLine(canvas)
         //绘制使用人的位置点
-        canvas.drawCircle(mPositionPoint[0], mPositionPoint[1], 10f, mPositionPaint)
+//        canvas.drawCircle(mPositionPoint[0], mPositionPoint[1], 10f, mPositionPaint)
         //绘制虚线连接起点与用户位置点
-        canvas.drawLine(mPositionPoint[0], mPositionPoint[1], mCoordinate[0].x * 100f, mCoordinate[0].y * 100f, mPositionPaint)
+        canvas.drawLine(
+            mPosition[0].x,
+            mPosition[0].y,
+            mCoordinate[0].x * 100f,
+            mCoordinate[0].y * 100f,
+            mPositionPaint
+        )
     }
+
 
     //这里应该使用和drawRouteLine相似的方法
     private fun drawMapLine(canvas: Canvas) {
@@ -117,6 +171,14 @@ class MapRouteView @JvmOverloads constructor(context: Context, attrs: AttributeS
             isAntiAlias = true
             strokeWidth = 5f
         }
+
+//        mBitPaint = Paint(Paint.ANTI_ALIAS_FLAG);
+//        mBitPaint.isFilterBitmap = true
+//        mBitPaint.isDither = true
+
+        //获取箭头图片
+//        arrowBitmap =
+//            BitmapFactory.decodeResource(context.resources, R.drawable.navigation_arrow_image)
     }
 
     /**
@@ -165,5 +227,71 @@ class MapRouteView @JvmOverloads constructor(context: Context, attrs: AttributeS
             Log.e(MapRouteView.TAG, "Error seeding database", ex)
         }
     }
+
+    private fun readLocalPositionFile() {
+        //以下是解析代码，放在你想放的地方，注意不要放在主线程
+        //目前暂不做线程优化
+        try {
+            context.assets.open("用户位置坐标.json").use { inputStream ->
+                JsonReader(inputStream.reader()).use { jsonReader ->
+                    val dataType = object : TypeToken<List<Position>>() {}.type
+                    //解析
+                    val dataList: List<Position> = Gson().fromJson(jsonReader, dataType)
+                    for(i in dataList){
+                        mPosition.add(i)
+                    }
+                }
+            }
+
+        } catch (ex: Exception) {
+            Log.e(MapRouteView.TAG, "Error seeding database", ex)
+        }
+    }
+
+    private fun readLocalSpeedFile() {
+        //以下是解析代码，放在你想放的地方，注意不要放在主线程
+        //目前暂不做线程优化
+        try {
+
+            context.assets.open("速度变化.json").use { inputStream ->
+                JsonReader(inputStream.reader()).use { jsonReader ->
+                    val dataType = object : TypeToken<List<Speed>>() {}.type
+                    //解析
+                    val dataList: List<Speed> = Gson().fromJson(jsonReader, dataType)
+                    for(i in dataList){
+                        mSpeed.add(i)
+                    }
+                }
+            }
+
+        } catch (ex: Exception) {
+            Log.e(MapRouteView.TAG, "Error seeding database", ex)
+        }
+    }
+
+    private fun readLocalDistanceFile() {
+        //以下是解析代码，放在你想放的地方，注意不要放在主线程
+        //目前暂不做线程优化
+        try {
+            context.assets.open("距离变化.json").use { inputStream ->
+                JsonReader(inputStream.reader()).use { jsonReader ->
+                    val dataType = object : TypeToken<List<Distance>>() {}.type
+                    //解析
+                    val dataList: List<Distance> = Gson().fromJson(jsonReader, dataType)
+                    for(i in dataList){
+                        mDistance.add(i)
+                    }
+                }
+            }
+
+        } catch (ex: Exception) {
+            Log.e(MapRouteView.TAG, "Error seeding database", ex)
+        }
+    }
+
+    fun getPosition(): ArrayList<Position> {
+        return mPosition
+    }
+
 }
 

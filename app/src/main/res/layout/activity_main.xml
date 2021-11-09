@@ -59,6 +59,7 @@
 
             </LinearLayout>
             <ImageView
+                android:id="@+id/sos_button"
                 android:layout_width="0dp"
                 android:layout_height="125dp"
                 android:layout_weight="2"

@@ -7,14 +7,13 @@
 
     <com.cdu.uwb.ui.MapRouteView
         android:id="@+id/maprouteview"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"/>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <ImageView
-        android:id="@+id/navigation_arrow"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_centerInParent="true"
-        android:src="@drawable/navigation_arrow_image"/>
+        android:id="@+id/arrow_image"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        />
 
 </RelativeLayout>
