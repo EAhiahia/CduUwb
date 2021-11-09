@@ -26,6 +26,18 @@
         <activity
             android:name="com.cdu.uwb.activity.MapRouteVewActivity">
         </activity>
+        <activity
+            android:name="com.cdu.uwb.activity.ViewFirst">
+        </activity>
+        <activity
+            android:name="com.cdu.uwb.activity.ViewSecond">
+        </activity>
+        <activity
+            android:name="com.cdu.uwb.activity.ViewThird">
+        </activity>
+        <activity
+            android:name="com.cdu.uwb.activity.ViewFour">
+        </activity>
     </application>
 
 </manifest>

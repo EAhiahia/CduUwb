@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.content.Intent
+import android.media.Image
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -14,14 +15,20 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import com.cdu.uwb.activity.MapRouteVewActivity
+import com.cdu.uwb.activity.*
 import com.cdu.uwb.data.Position
 import com.cdu.uwb.ui.MapRouteView
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import java.util.*
+import kotlin.concurrent.schedule
 import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity(), View.OnClickListener{
@@ -35,6 +42,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
     private lateinit var sosButton: ImageView
     private lateinit var mapRouteView: MapRouteView
     private lateinit var arrowImage: ImageView
+    private lateinit var speedText: TextView
+    private lateinit var distanceText: TextView
+    private lateinit var stateImage: ImageView
 
 //    val moveArrow = 1
 //    val handler = object : Handler(Looper.getMainLooper()){
@@ -57,6 +67,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
         sosButton =findViewById(R.id.sos_button)
         mapRouteView = findViewById(R.id.maprouteview)
         arrowImage = findViewById(R.id.arrow_image)
+        speedText =findViewById(R.id.speed_text)
+        distanceText = findViewById(R.id.distance_text)
+        stateImage = findViewById(R.id.state_image)
 
         //给ImageView设置图片，并设置到路线的起点，实际上是设置到用户当前位置
         arrowImage.setImageResource(R.drawable.navigation_arrow_image)
@@ -77,11 +90,31 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
         //点击一个就自动关闭，侧滑栏的按钮
         navView.setNavigationItemSelectedListener {
             when(it.itemId){
-                R.id.home_page -> Toast.makeText(this , "You clicked 首页.", Toast.LENGTH_SHORT).show()
-                R.id.instructions -> Toast.makeText(this , "You clicked 软件使用说明.", Toast.LENGTH_SHORT).show()
-                R.id.map_all -> Toast.makeText(this , "You clicked 场地地图查看.", Toast.LENGTH_SHORT).show()
-                R.id.evacuate_knowledge -> Toast.makeText(this , "You clicked 应急疏散知识.", Toast.LENGTH_SHORT).show()
-                R.id.first_aid_knowledge -> Toast.makeText(this , "You clicked 常见急救方法.", Toast.LENGTH_SHORT).show()
+                R.id.home_page -> {
+                    Toast.makeText(this, "You clicked 首页.", Toast.LENGTH_SHORT).show()
+                    var intent = Intent(this, ViewFirst::class.java)
+                    startActivity(intent)
+                }
+                R.id.instructions -> {
+                    Toast.makeText(this, "You clicked 软件使用说明.", Toast.LENGTH_SHORT).show()
+                    var intent = Intent(this, ViewFirst::class.java)
+                    startActivity(intent)
+                }
+                R.id.map_all -> {
+                    Toast.makeText(this, "You clicked 场地地图查看.", Toast.LENGTH_SHORT).show()
+                    var intent = Intent(this, ViewSecond::class.java)
+                    startActivity(intent)
+                }
+                R.id.evacuate_knowledge -> {
+                    Toast.makeText(this, "You clicked 应急疏散知识.", Toast.LENGTH_SHORT).show()
+                    var intent = Intent(this, ViewThird::class.java)
+                    startActivity(intent)
+                }
+                R.id.first_aid_knowledge -> {
+                    Toast.makeText(this, "You clicked 常见急救方法.", Toast.LENGTH_SHORT).show()
+                    var intent = Intent(this, ViewFour::class.java)
+                    startActivity(intent)
+                }
             }
             drawerLayout.closeDrawers()
             true
@@ -94,59 +127,87 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
      * TODO: 以后改为后台循环获取uwb定位并做动画
      */
     private fun doAnimator() {
+        Thread {
+            for (i in mapRouteView.getPosition()) {
 
+                runOnUiThread {
+                    /**
+                     * 保存图片的原始坐标
+                     */
+                    var originX = arrowImage.x
+                    var originY = arrowImage.y
 
-        /**
-         * 保存图片的原始坐标
-         */
-        var originX = arrowImage.x
-        var originY = arrowImage.y
+                    /**
+                     * 内部应该是  目的坐标 - 初始坐标，便是移动的距离
+                     */
+                    var arrowAnimatorX = ValueAnimator.ofFloat(0f, i.x - originX)
+                    arrowAnimatorX.addUpdateListener {
+                        var value = it.animatedValue as Float
+                        arrowImage.x = originX + value
+                        Log.d(TAG, "doAnimator: value -> $value, arrowImage.x -> ${arrowImage.x}")
+                    }
 
-        /**
-         * 内部应该是  目的坐标 - 初始坐标，便是移动的距离
-         */
-        var arrowAnimatorX = ValueAnimator.ofFloat(0f, mapRouteView.getPosition()[0].x - originX)
-        arrowAnimatorX.addUpdateListener {
-            var value = it.animatedValue as Float
-            arrowImage.x = originX + value
-            Log.d(TAG, "doAnimator: value -> $value, arrowImage.x -> ${arrowImage.x}")
-        }
+                    var arrowAnimatorY = ValueAnimator.ofFloat(0f, i.y - originY)
+                    arrowAnimatorY.addUpdateListener {
+                        var value = it.animatedValue as Float
+                        arrowImage.y = originY + value
+                    }
+                    var animatorAll = AnimatorSet()
+                    animatorAll.playTogether(arrowAnimatorX, arrowAnimatorY)
+                    animatorAll.duration = 500
+                    animatorAll.start()
+                }
 
-        var arrowAnimatorY = ValueAnimator.ofFloat(0f, mapRouteView.getPosition()[0].y - originY)
-        arrowAnimatorY.addUpdateListener {
-            var value = it.animatedValue as Float
-            arrowImage.y = originY + value
-        }
-        var animatorAll = AnimatorSet()
-        animatorAll.playTogether(arrowAnimatorX, arrowAnimatorY)
-        animatorAll.duration = 500
-        animatorAll.start()
-        animatorAll.addListener(object : Animator.AnimatorListener{
-            override fun onAnimationStart(animation: Animator?) {
-                TODO("Not yet implemented")
+                Thread.sleep(1000)
             }
-
-            override fun onAnimationEnd(animation: Animator?) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onAnimationCancel(animation: Animator?) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onAnimationRepeat(animation: Animator?) {
-                TODO("Not yet implemented")
-            }
-
-        })
+        }.start()
     }
 
     override fun onClick(v: View?) {
         when(v?.id){
             R.id.sos_button -> {
-
+//                var msg = Message()
+//                msg.what = moveArrow
+//                handler.sendMessage(msg)
+                doAnimator()
+                changeSpeed()
+                changeDistance()
             }
         }
+    }
+
+    private fun changeDistance() {
+        Thread{
+            for(i in mapRouteView.getDistance()) {
+                runOnUiThread {
+                    distanceText.text = i.distance.toString()
+                }
+                Log.d(TAG, "changeDistance: ${i.distance}")
+                Thread.sleep(1000)
+            }
+        }.start()
+    }
+
+    private fun changeSpeed() {
+        Thread{
+            for (i in mapRouteView.getSpeed()) {
+                runOnUiThread {
+                    speedText.text = i.speed.toString()
+                    Log.d(TAG, "changeSpeed: ${i.speed}")
+                    if (i.speed >= 30) {
+                        stateImage.setImageResource(R.drawable.running_image)
+                    } else if (i.speed <= 1) {
+                        stateImage.setImageResource(R.drawable.standing_image)
+                    } else {
+                        stateImage.setImageResource(R.drawable.walking_image)
+                    }
+                }
+                Thread.sleep(1000)
+
+
+            }
+        }.start()
+
     }
 
     //标题栏的按钮

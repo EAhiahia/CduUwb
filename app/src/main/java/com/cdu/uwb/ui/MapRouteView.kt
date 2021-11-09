@@ -239,6 +239,7 @@ class MapRouteView @JvmOverloads constructor(context: Context, attrs: AttributeS
                     val dataList: List<Position> = Gson().fromJson(jsonReader, dataType)
                     for(i in dataList){
                         mPosition.add(i)
+                        Log.d(TAG, "readLocalPositionFile: ${i.x} + ${i.y}")
                     }
                 }
             }
@@ -291,6 +292,14 @@ class MapRouteView @JvmOverloads constructor(context: Context, attrs: AttributeS
 
     fun getPosition(): ArrayList<Position> {
         return mPosition
+    }
+
+    fun getDistance(): ArrayList<Distance> {
+        return mDistance
+    }
+
+    fun getSpeed(): ArrayList<Speed> {
+        return mSpeed
     }
 
 }
