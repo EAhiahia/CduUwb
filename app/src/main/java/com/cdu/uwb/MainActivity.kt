@@ -3,7 +3,12 @@ package com.cdu.uwb
 import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
+import android.content.Context
 import android.content.Intent
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.media.Image
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -27,11 +32,12 @@ import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import java.lang.StringBuilder
 import java.util.*
 import kotlin.concurrent.schedule
 import kotlin.concurrent.thread
 
-class MainActivity : AppCompatActivity(), View.OnClickListener {
+class MainActivity : AppCompatActivity(), View.OnClickListener, SensorEventListener {
 
     companion object {
         const val TAG = "MainActivity"
@@ -47,6 +53,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var distanceText: TextView
     private lateinit var stateImage: ImageView
 
+    private lateinit var mSensorManager: SensorManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -61,6 +69,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         speedText = findViewById(R.id.speed_text)
         distanceText = findViewById(R.id.distance_text)
         stateImage = findViewById(R.id.state_image)
+
+        mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
         //给ImageView设置图片，并设置到路线的起点，实际上是设置到用户当前位置
         arrowImage.setImageResource(R.drawable.navigation_arrow_image)
@@ -110,6 +120,21 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             drawerLayout.closeDrawers()
             true
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mSensorManager.registerListener(
+            this,
+            mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
+            SensorManager.SENSOR_DELAY_GAME
+        )
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // 取消监听
+        mSensorManager.unregisterListener(this)
     }
 
     /**
@@ -201,5 +226,29 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
         return true
+    }
+
+    override fun onSensorChanged(event: SensorEvent) {
+        val values = event.values
+        // 获取传感器类型
+        val type = event.sensor.type
+        val sb: StringBuilder
+        when (type) {
+            Sensor.TYPE_ORIENTATION -> {
+//                sb = StringBuilder()
+//                sb.append("\n方向传感器返回数据：")
+//                sb.append("\n绕Z轴转过的角度：")
+//                sb.append(values[0])
+//                sb.append("\n绕X轴转过的角度：")
+//                sb.append(values[1])
+//                sb.append("\n绕Y轴转过的角度：")
+//                sb.append(values[2])
+//                mTxtValue2.text = sb.toString()
+                arrowImage.rotation = values[0]
+            }
+        }
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
     }
 }
