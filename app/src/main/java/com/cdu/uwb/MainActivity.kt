@@ -31,11 +31,12 @@ import java.util.*
 import kotlin.concurrent.schedule
 import kotlin.concurrent.thread
 
-class MainActivity : AppCompatActivity(), View.OnClickListener{
+class MainActivity : AppCompatActivity(), View.OnClickListener {
 
-    companion object{
+    companion object {
         const val TAG = "MainActivity"
     }
+
     private lateinit var toolbar: Toolbar
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navView: NavigationView
@@ -46,16 +47,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
     private lateinit var distanceText: TextView
     private lateinit var stateImage: ImageView
 
-//    val moveArrow = 1
-//    val handler = object : Handler(Looper.getMainLooper()){
-//        override fun handleMessage(msg: Message) {
-//            when (msg.what){
-//                moveArrow -> doAnimator()
-//            }
-//        }
-//    }
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -64,10 +55,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
         toolbar = findViewById(R.id.toolbar)
         drawerLayout = findViewById(R.id.drawerLayout)
         navView = findViewById(R.id.navView)
-        sosButton =findViewById(R.id.sos_button)
+        sosButton = findViewById(R.id.sos_button)
         mapRouteView = findViewById(R.id.maprouteview)
         arrowImage = findViewById(R.id.arrow_image)
-        speedText =findViewById(R.id.speed_text)
+        speedText = findViewById(R.id.speed_text)
         distanceText = findViewById(R.id.distance_text)
         stateImage = findViewById(R.id.state_image)
 
@@ -89,7 +80,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
         navView.setCheckedItem(R.id.home_page)
         //点击一个就自动关闭，侧滑栏的按钮
         navView.setNavigationItemSelectedListener {
-            when(it.itemId){
+            when (it.itemId) {
                 R.id.home_page -> {
                     Toast.makeText(this, "You clicked 首页.", Toast.LENGTH_SHORT).show()
                     var intent = Intent(this, ViewFirst::class.java)
@@ -129,7 +120,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
     private fun doAnimator() {
         Thread {
             for (i in mapRouteView.getPosition()) {
-
                 runOnUiThread {
                     /**
                      * 保存图片的原始坐标
@@ -146,7 +136,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
                         arrowImage.x = originX + value
                         Log.d(TAG, "doAnimator: value -> $value, arrowImage.x -> ${arrowImage.x}")
                     }
-
                     var arrowAnimatorY = ValueAnimator.ofFloat(0f, i.y - originY)
                     arrowAnimatorY.addUpdateListener {
                         var value = it.animatedValue as Float
@@ -157,18 +146,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
                     animatorAll.duration = 500
                     animatorAll.start()
                 }
-
                 Thread.sleep(1000)
             }
         }.start()
     }
 
     override fun onClick(v: View?) {
-        when(v?.id){
+        when (v?.id) {
             R.id.sos_button -> {
-//                var msg = Message()
-//                msg.what = moveArrow
-//                handler.sendMessage(msg)
                 doAnimator()
                 changeSpeed()
                 changeDistance()
@@ -177,8 +162,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
     }
 
     private fun changeDistance() {
-        Thread{
-            for(i in mapRouteView.getDistance()) {
+        Thread {
+            for (i in mapRouteView.getDistance()) {
                 runOnUiThread {
                     distanceText.text = i.distance.toString()
                 }
@@ -189,7 +174,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
     }
 
     private fun changeSpeed() {
-        Thread{
+        Thread {
             for (i in mapRouteView.getSpeed()) {
                 runOnUiThread {
                     speedText.text = i.speed.toString()
@@ -203,8 +188,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
                     }
                 }
                 Thread.sleep(1000)
-
-
             }
         }.start()
 
@@ -212,7 +195,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
 
     //标题栏的按钮
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        when (item.itemId) {
             android.R.id.home -> {
                 drawerLayout.openDrawer(GravityCompat.START)
             }
