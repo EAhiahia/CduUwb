@@ -1,35 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DesignSurface">
-    <option name="filePathToZoomLevelMap">
-      <map>
-        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.271875" />
-        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/drawable/ic_launcher_background.xml" value="0.271875" />
-        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/activity_main.xml" value="0.20168066580377575" />
-        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/drawerlayout.xml" value="0.12436676798378926" />
-        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/gyroscope_layout.xml" value="0.24320652173913043" />
-        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/map_route_activity.xml" value="0.12284701114488349" />
-        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/map_route_layout.xml" value="0.14356884057971014" />
-        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/nav_header.xml" value="0.14356884057971014" />
-        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/sensor_layout.xml" value="0.2557291666666667" />
-        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/titile_bar.xml" value="0.2557291666666667" />
-        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/view_1.xml" value="0.40729166666666666" />
-        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/view_2.xml" value="0.40729166666666666" />
-        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/view_3.xml" value="0.40729166666666666" />
-        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/layout/view_4.xml" value="0.40729166666666666" />
-        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/menu/nav_menu.xml" value="0.2557291666666667" />
-        <entry key="..\:/AndroidStudioSetting/Project/UWB/app/src/main/res/menu/toolbar.xml" value="0.2557291666666667" />
-      </map>
-    </option>
-  </component>
-  <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
-  </component>
-  <component name="SuppressKotlinCodeStyleNotification">
-    <option name="disableForAll" value="true" />
   </component>
 </project>

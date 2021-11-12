@@ -16,7 +16,9 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.util.Log
+import android.view.GestureDetector
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -37,7 +39,7 @@ import java.util.*
 import kotlin.concurrent.schedule
 import kotlin.concurrent.thread
 
-class MainActivity : AppCompatActivity(), View.OnClickListener, SensorEventListener {
+class MainActivity : AppCompatActivity(), View.OnClickListener, SensorEventListener, View.OnTouchListener {
 
     companion object {
         const val TAG = "MainActivity"
@@ -73,12 +75,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, SensorEventListe
         mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
         //给ImageView设置图片，并设置到路线的起点，实际上是设置到用户当前位置
-        arrowImage.setImageResource(R.drawable.navigation_arrow_image)
+//        arrowImage.setImageResource(R.drawable.navigation_arrow_image)
         /**
          * TODO: 这里需要减去图片的一半宽度，但是使用.width获得的是0，因为Imageview实际上并没有加载完，建议直接获取imageview的一半宽度，不使用.width
          */
-        arrowImage.x = mapRouteView.getPosition()[0].x
-        arrowImage.y = mapRouteView.getPosition()[0].y
+        arrowImage.x = mapRouteView.getPosition()[0].x - arrowImage.width/2
+        arrowImage.y = mapRouteView.getPosition()[0].y - arrowImage.height/2
 
         sosButton.setOnClickListener(this)
         setSupportActionBar(toolbar)
@@ -143,15 +145,21 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, SensorEventListe
      * TODO: 以后改为后台循环获取uwb定位并做动画
      */
     private fun doAnimator() {
-        Thread {
+        thread {
             for (i in mapRouteView.getPosition()) {
                 runOnUiThread {
+                    /**
+                     * 保存图片的原始坐标
+                     */
                     /**
                      * 保存图片的原始坐标
                      */
                     var originX = arrowImage.x
                     var originY = arrowImage.y
 
+                    /**
+                     * 内部应该是  目的坐标 - 初始坐标，便是移动的距离
+                     */
                     /**
                      * 内部应该是  目的坐标 - 初始坐标，便是移动的距离
                      */
@@ -173,7 +181,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, SensorEventListe
                 }
                 Thread.sleep(1000)
             }
-        }.start()
+        }
     }
 
     override fun onClick(v: View?) {
@@ -187,7 +195,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, SensorEventListe
     }
 
     private fun changeDistance() {
-        Thread {
+        thread {
             for (i in mapRouteView.getDistance()) {
                 runOnUiThread {
                     distanceText.text = i.distance.toString()
@@ -195,11 +203,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, SensorEventListe
                 Log.d(TAG, "changeDistance: ${i.distance}")
                 Thread.sleep(1000)
             }
-        }.start()
+        }
     }
 
     private fun changeSpeed() {
-        Thread {
+        thread {
             for (i in mapRouteView.getSpeed()) {
                 runOnUiThread {
                     speedText.text = i.speed.toString()
@@ -214,7 +222,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, SensorEventListe
                 }
                 Thread.sleep(1000)
             }
-        }.start()
+        }
 
     }
 
@@ -235,20 +243,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, SensorEventListe
         val sb: StringBuilder
         when (type) {
             Sensor.TYPE_ORIENTATION -> {
-//                sb = StringBuilder()
-//                sb.append("\n方向传感器返回数据：")
-//                sb.append("\n绕Z轴转过的角度：")
-//                sb.append(values[0])
-//                sb.append("\n绕X轴转过的角度：")
-//                sb.append(values[1])
-//                sb.append("\n绕Y轴转过的角度：")
-//                sb.append(values[2])
-//                mTxtValue2.text = sb.toString()
                 arrowImage.rotation = values[0]
             }
         }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+    }
+
+    override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+        TODO("Not yet implemented")
     }
 }

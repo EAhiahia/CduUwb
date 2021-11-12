@@ -5,15 +5,18 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <ImageView
+        android:id="@+id/arrow_image"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/navigation_arrow_image"
+        />
+
     <com.cdu.uwb.ui.MapRouteView
         android:id="@+id/maprouteview"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <ImageView
-        android:id="@+id/arrow_image"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        />
+
 
 </RelativeLayout>
