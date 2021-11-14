@@ -20,10 +20,7 @@ import android.view.GestureDetector
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -31,6 +28,7 @@ import com.cdu.uwb.activity.*
 import com.cdu.uwb.data.Position
 import com.cdu.uwb.ui.MapRouteView
 import com.google.android.material.navigation.NavigationView
+import com.jarvislau.destureviewbinder.GestureViewBinder
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -54,6 +52,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, SensorEventListe
     private lateinit var speedText: TextView
     private lateinit var distanceText: TextView
     private lateinit var stateImage: ImageView
+    private lateinit var mapRouteLayout: RelativeLayout
 
     private lateinit var mSensorManager: SensorManager
 
@@ -61,43 +60,50 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, SensorEventListe
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         supportActionBar?.hide()
-
-        toolbar = findViewById(R.id.toolbar)
-        drawerLayout = findViewById(R.id.drawerLayout)
-        navView = findViewById(R.id.navView)
-        sosButton = findViewById(R.id.sos_button)
-        mapRouteView = findViewById(R.id.maprouteview)
-        arrowImage = findViewById(R.id.arrow_image)
-        speedText = findViewById(R.id.speed_text)
-        distanceText = findViewById(R.id.distance_text)
-        stateImage = findViewById(R.id.state_image)
-
-        mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-
-        //给ImageView设置图片，并设置到路线的起点，实际上是设置到用户当前位置
+        initListener()
+        initToolBar()
+        initSensor()
+        //TODO:给ImageView设置图片，并设置到路线的起点，实际上是设置到用户当前位置，需要使用uwb的位置坐标
 //        arrowImage.setImageResource(R.drawable.navigation_arrow_image)
         /**
          * TODO: 这里需要减去图片的一半宽度，但是使用.width获得的是0，因为Imageview实际上并没有加载完，建议直接获取imageview的一半宽度，不使用.width
          */
-        arrowImage.x = mapRouteView.getPosition()[0].x - arrowImage.width/2
-        arrowImage.y = mapRouteView.getPosition()[0].y - arrowImage.height/2
+        arrowImage.x = mapRouteView.getPosition()[0].x - arrowImage.width / 2
+        arrowImage.y = mapRouteView.getPosition()[0].y - arrowImage.height / 2
+        //使用开源的module实现了自定义view的缩放移动
+        //TODO:用户位置的箭头图片并不包含在我们的自定义控件mapRouteView当中，所以进行缩放的时候，箭头并没有动，而且其移动的动画也是虚空的，建议把图片加入自定义view当中
+        initScaleCustomView()
+    }
 
-        sosButton.setOnClickListener(this)
+    private fun initScaleCustomView() {
+        var bind = GestureViewBinder.bind(this, mapRouteLayout, mapRouteView)
+        bind.isFullGroup = true
+        bind.setOnScaleListener {
+            Log.i("TAG", "$it ...")
+        }
+    }
+
+    private fun initSensor() {
+        mSensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
+    }
+
+    private fun initToolBar() {
         setSupportActionBar(toolbar)
         supportActionBar?.let {
             it.setDisplayHomeAsUpEnabled(true)
             it.setHomeAsUpIndicator(R.drawable.ic_menu)
         }
         //默认选中这个界面
+        //TODO:界面应该做成主页面不在toolbar里面，每点击一个toolbar的内容就点开一个Activity
         navView.setCheckedItem(R.id.home_page)
         //点击一个就自动关闭，侧滑栏的按钮
         navView.setNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.home_page -> {
-                    Toast.makeText(this, "You clicked 首页.", Toast.LENGTH_SHORT).show()
-                    var intent = Intent(this, ViewFirst::class.java)
-                    startActivity(intent)
-                }
+//                R.id.home_page -> {
+//                    Toast.makeText(this, "You clicked 首页.", Toast.LENGTH_SHORT).show()
+//                    var intent = Intent(this, ViewFirst::class.java)
+//                    startActivity(intent)
+//                }
                 R.id.instructions -> {
                     Toast.makeText(this, "You clicked 软件使用说明.", Toast.LENGTH_SHORT).show()
                     var intent = Intent(this, ViewFirst::class.java)
@@ -122,6 +128,20 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, SensorEventListe
             drawerLayout.closeDrawers()
             true
         }
+    }
+
+    private fun initListener() {
+        toolbar = findViewById(R.id.toolbar)
+        drawerLayout = findViewById(R.id.drawerLayout)
+        navView = findViewById(R.id.navView)
+        sosButton = findViewById(R.id.sos_button)
+        mapRouteView = findViewById(R.id.maprouteview)
+        arrowImage = findViewById(R.id.arrow_image)
+        speedText = findViewById(R.id.speed_text)
+        distanceText = findViewById(R.id.distance_text)
+        stateImage = findViewById(R.id.state_image)
+        mapRouteLayout = findViewById(R.id.maproutelayout)
+        sosButton.setOnClickListener(this)
     }
 
     override fun onResume() {
@@ -252,6 +272,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, SensorEventListe
     }
 
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+        doScaleAnimator()
+        return true
+    }
+
+    private fun doScaleAnimator() {
         TODO("Not yet implemented")
     }
+
+
 }

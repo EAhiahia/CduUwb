@@ -16,7 +16,6 @@
             android:name=".MainActivity"
             android:exported="true"
             android:label="UWB人群疏散软件">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

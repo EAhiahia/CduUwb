@@ -66,8 +66,13 @@ class MapRouteView @JvmOverloads constructor(context: Context, attrs: AttributeS
     //进行绘制
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        //TODO:解决效率问题：做一个判定，如果地图路线数据和导航路线数据没有变化，那就不用重新绘制
+        //以线条的形式绘制地图
         drawMapLine(canvas)
+        //以线条的形式绘制导航的路线
         drawRouteLine(canvas)
+        //以下的无论什么情况都需要进行重新绘制
+        //以线条的形式绘制用户到路线起点的线
         canvas.drawLine(
             mPosition[0].x,
             mPosition[0].y,
@@ -75,7 +80,12 @@ class MapRouteView @JvmOverloads constructor(context: Context, attrs: AttributeS
             mCoordinate[0].y * 100f,
             mPositionPaint
         )
+        //TODO:绘制用户到路线终点的线段
+        //TODO:绘制用户位置的箭头图片，但是就面临一个问题，如何给他设置点击事件？因为他没有id。
     }
+
+    //TODO:不应该把动画迁移到这里，当外界
+
 
     //这里应该使用和drawRouteLine相似的方法
     private fun drawMapLine(canvas: Canvas) {
